@@ -49,15 +49,47 @@ A tensor is an object that can be represented as an array
 ## P3 - The dot product 
 import numpy as np 
 
-inputs = [1,2,3,2.5]
+"""
+
+inputs = [[1,2,3,2.5],[2.0,5.0,-1.0,2.0],[-1.5,2.7,3.3,-0.8]]
 weights = [[0.2,0.8,-0.5,1.0],[0.5,-0.91,0.26,-0.5],[-0.26,-0.27,0.17,0.87]] 
 biases = [2,3,0.5]
+weights2 = [[0.1,-0.14,0.5],[-0.5,0.12,-0.33],[-0.44,0.73,-0.13]]
+biases2 = [-1,2,-0.5] 
+weights_transpose  = np.array(weights).T
+
+layer1_output  = np.dot(inputs,weights_transpose) + biases
+weights2_transpose = np.array(weights2).T
+layer2_output = np.dot(layer1_output,weights2_transpose)+biases2
 
 
-output  = np.dot(weights,inputs) + biases
-
-""" Weights always comes first 
+Weights always comes first 
 WHY?  try matrix multiplying biases * weights 
-""" 
 
-print(f"output : {output}")
+print(f"layer 1 output :\n  {layer1_output}")
+print(f"layer 2 output :\n  {layer2_output}")
+
+
+"""
+
+np.random.seed(0)
+X = [[1,2,3,2.5],[2.0,5.0,-1.0,2.0],[-1.5,2.7,3.3,-0.8]]
+
+class Layer_Dense: 
+    def __init__(self,n_inputs, n_neurons):
+        self.weights = 0.10 * np.random.randn(n_inputs,n_neurons)
+        self.biases = np.zeros((1,n_neurons))
+    def forward(self,inputs):
+        self.output = np.dot(inputs,self.weights) + self.biases 
+
+
+layer1 = Layer_Dense(4,5)
+layer2 = Layer_Dense(5,2)
+
+
+layer1.forward(X)
+print(f"layer 1 output :\n {layer1.output}")
+
+layer2.forward(layer1.output)
+print(f"layer 2 output :\n {layer2.output}")
+
