@@ -1,6 +1,7 @@
 """
     mulilayered , feedforward, multiperceptron neuron 
 """
+
 """
 inputs = [1,2,3,2.5]
 weights = [[0.2,0.8,-0.5,1.0],[0.5,-0.91,0.26,-0.5],[-0.26,-0.27,0.17,0.87]] 
@@ -16,16 +17,16 @@ print(f"output : {output(summ,inputs,weights)}")
 
 you can tweak weights and bias but not the inputs
 
-""" 
+"""
 
 #    def mul(inputs,weights):
-#        summ = 0 
+#        summ = 0
 #        for i in range(len(inputs)):
 #            summ += inputs[i]*weights[i]
-#        return summ 
+#        return summ
 #    def out(inputs,weights,bias):
-#        return mul(inputs,weights) + bias 
-#    
+#        return mul(inputs,weights) + bias
+#
 
 """
 def out(weights,biases,inputs,output):
@@ -46,8 +47,8 @@ A tensor is an object that can be represented as an array
 """
 
 
-## P3 - The dot product 
-import numpy as np 
+## P3 - The dot product
+import numpy as np
 
 """
 
@@ -70,7 +71,6 @@ print(f"layer 1 output :\n  {layer1_output}")
 print(f"layer 2 output :\n  {layer2_output}")
 
 
-"""
 
 np.random.seed(0)
 X = [[1,2,3,2.5],[2.0,5.0,-1.0,2.0],[-1.5,2.7,3.3,-0.8]]
@@ -93,3 +93,54 @@ print(f"layer 1 output :\n {layer1.output}")
 layer2.forward(layer1.output)
 print(f"layer 2 output :\n {layer2.output}")
 
+
+
+-   step function
+-   Sigmoid function
+-   Rectifed linear function (ReLU) (Fast) (Most popular for hidden layers)
+    -   So close to linear but so powerful for non-linear inputs 
+
+Why even an activation function ?
+
+-  for non-linear inputs
+
+"""
+
+import nnfs
+nnfs.init()
+
+from nnfs.datasets import spiral_data
+
+X,y  = spiral_data(100,3) 
+
+class Layer_Dense:
+    def __init__(self, n_inputs, n_neurons):
+        self.weights = 0.10 * np.random.randn(n_inputs, n_neurons)
+        self.biases = np.zeros((1, n_neurons))
+
+    def forward(self, inputs):
+        self.output = np.dot(inputs, self.weights) + self.biases
+
+
+class Activation_ReLU:
+    def __init__(self):
+        pass
+
+    def forward(self, inputs):
+        self.output = np.maximum(0, inputs)
+
+
+layer1 = Layer_Dense(2, 5)
+#layer2 = Layer_Dense(5, 2)
+
+activation1 = Activation_ReLU()
+
+
+layer1.forward(X)
+print(f"layer 1 output :\n {layer1.output}")
+activation1.forward(layer1.output)
+print(f"activation1 output :\n {activation1.output}") 
+
+
+#layer2.forward(layer1.output)
+#print(f"layer 2 output :\n {layer2.output}")
