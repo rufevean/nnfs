@@ -11,6 +11,7 @@ biases = [2,3,0.5]
 a simple output function is summation of all multiplications of weights and inputs and adding it with bias 
 
 
+
 output = lambda summ, inputs, weights: summ + sum(inputs[i] * weights[i] for i in range(len(inputs))) + bias ( SIMPLY A DOT PRODUCT OF WEIGHTS AND INPUTS and add it to BIASES) 
 
 print(f"output : {output(summ,inputs,weights)}")
@@ -103,15 +104,13 @@ print(f"layer 2 output :\n {layer2.output}")
 Why even an activation function ?
 
 -  for non-linear inputs
+""" 
 
-"""
 
 import nnfs
 nnfs.init()
 
-from nnfs.datasets import spiral_data
-
-X,y  = spiral_data(100,3) 
+from nnfs.datasets import spiral_data 
 
 class Layer_Dense:
     def __init__(self, n_inputs, n_neurons):
@@ -129,18 +128,39 @@ class Activation_ReLU:
     def forward(self, inputs):
         self.output = np.maximum(0, inputs)
 
-
-layer1 = Layer_Dense(2, 5)
-#layer2 = Layer_Dense(5, 2)
-
-activation1 = Activation_ReLU()
-
-
-layer1.forward(X)
-print(f"layer 1 output :\n {layer1.output}")
-activation1.forward(layer1.output)
-print(f"activation1 output :\n {activation1.output}") 
+class Activation_Softmax:
+    def forward(self,inputs):
+        exp_values = np.exp(inputs-np.max(inputs,axis=1,keepdims=True))
+        ps = exp_values / np.sum(exp_values,axis=1,keepdims=True)
+        self.output = ps  
 
 
-#layer2.forward(layer1.output)
-#print(f"layer 2 output :\n {layer2.output}")
+X,y = spiral_data(samples=100,classes=3) 
+
+dense1 = Layer_Dense(2,3)
+act1 = Activation_ReLU() 
+
+dense2 = Layer_Dense(3,3)
+act2 = Activation_Softmax() 
+
+dense1.forward(X)
+act1.forward(dense1.output)
+
+dense2.forward(act1.output)
+act2.forward(dense2.output) 
+
+print(act2.output[:5]) 
+
+"""
+import numpy as np 
+layer_output = [[4.8,1.21,2.385],
+                [8.9,-1.81,0.2],
+                [1.41,1.051,0.026]] 
+
+exp_values = np.exp(layer_output) 
+norm_values = exp_values / np.sum(exp_values,axis=1,keepdims=True)
+
+
+print(norm_values) 
+
+"""  
