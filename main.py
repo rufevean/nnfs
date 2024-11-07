@@ -134,6 +134,24 @@ class Activation_Softmax:
         ps = exp_values / np.sum(exp_values,axis=1,keepdims=True)
         self.output = ps  
 
+class Loss:
+    def calcuate(self,output,y):
+        sample_loss = self.forward(output,y)
+        data_loss = np.mean(sample_loss)
+        return data_loss
+
+class Loss_CategoricaCrossentropy(Loss):
+    def forward(self,y_pred,y_true):
+        samples = len(y_pred)
+        y_pred_clip = np.clip(y_pred,1e-7,1-1e-7)
+        if len(y_true.shape) == 1:
+            correct_confidences = y_pred_clip[range(samples),y_true]  
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(y_pred_clip * y_true, axis= 1 )
+        negative_log_likelihoods = -np.log(correct_confidences)
+        return negative_log_likelihoods 
+
+
 
 X,y = spiral_data(samples=100,classes=3) 
 
@@ -151,6 +169,9 @@ act2.forward(dense2.output)
 
 print(act2.output[:5]) 
 
+loss_function = Loss_CategoricaCrossentropy()
+loss = loss_function.calcuate(act2.output,y) 
+print("Loss",loss) 
 """
 import numpy as np 
 layer_output = [[4.8,1.21,2.385],
